@@ -1,0 +1,49 @@
+@import 'styles/fonts.scss';
+@import 'styles/splitPane.scss';
+html {
+  overflow-y: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: $font-primary;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  width: device-width;
+}
+
+*:focus {
+  outline: none;
+}
+
+
+code {
+  font-family: $font-primary;
+}
+
+h1 {
+  font-family: $font-primary;
+}
+
+a {
+  text-decoration: none;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+.App {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+.App-logo {
+  width: 125px;
+}
+
+

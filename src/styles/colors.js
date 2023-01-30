@@ -1,0 +1,15 @@
+export const $brandColor = '#36D18A';
+export const $primary = '#14AAF5';
+export const $secondary = '#151b26';
+export const $danger = '#F46262';
+export const $warning = '#F4A862';
+export const $elevated = '#F4E562';
+export const $success = '#36D18A';
+export const $inactive = '#C4C4C4';
+export const $white = '#fff';
+export const $gray400 = '#434958';
+export const $bluishGray60 = '#BBC2CF';
+export const $lightGray = '#E4E7EA';
+export const $darkGray = '#555B6E';
+export const $backgroundOffWhite = '#FAFAFA';
+export const $black = '#040D20';
