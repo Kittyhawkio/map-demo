@@ -1,8 +1,8 @@
 export const defaultDetailPaneSize = '30%';
 export const emailDomain = 'aloft.ai';
 export const baseUrl = `https://www.${emailDomain}`;
-export const aboutLink = `${baseUrl}/b4ufly/about-aloft`;
-export const termsLink = `${baseUrl}/b4ufly/terms`;
+export const aboutLink = `${baseUrl}/b4ufly/about-aloft`; //TODO update link
+export const termsLink = `${baseUrl}/b4ufly/terms`; //TODO update link
 export const DETAIL_PANE_SIZE = 'DETAIL_PANE_SIZE';
 export const MAPBOX_TOKEN = 'mapboxAccessToken';
 export const ALOFT_TOKEN = 'aloftToken';

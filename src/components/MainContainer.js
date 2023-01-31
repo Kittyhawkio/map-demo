@@ -21,11 +21,9 @@ const MainContainer = () => {
 	const classes = useStyles();
 	const [pane2Width, setPane2Width] = useState(1); //The actual value of this does not matter. A change in this value is used to trigger a resize in the map component.
 	const [map, setMap] = useState(null);
-	const [mapLayers, setMapLayers] = useState([]);
-	const [mapSources, setMapSources] = useState([]);
-	// console.log('layers: ', mapLayers)
-	// console.log('sources: ', mapSources)
-	// console.log('map: ', map)
+	const [allLayers, setAllLayers] = useState([]);
+	const [sources, setSources] = useState([]);
+	const [visibleLayers, setVisibleLayers] = useState([])
 
 	const detailPaneSize = getDetailPaneSizeFromLS();
 
@@ -38,9 +36,9 @@ const MainContainer = () => {
 
 		const getMapLayersAndSources = async () => {
 			const {sources, layers} = await fetchMapLayersAndSources();
-			console.log('map layers and sources: ', layers, sources)
-			setMapLayers(layers);
-			setMapSources(sources)
+			setAllLayers(layers);
+			setVisibleLayers(layers)
+			setSources(sources)
 		}
 
 		getMapLayersAndSources();
@@ -57,8 +55,8 @@ const MainContainer = () => {
 						size={detailPaneSize}
 						primary={'second'}
 					>
-							<MapContainer widthOffset={pane2Width} sources={mapSources} layers={mapLayers} map={map} setMap={setMap} />
-							<RightPanelContainer />
+							<MapContainer widthOffset={pane2Width} sources={sources} layers={visibleLayers} map={map} setMap={setMap} />
+							<RightPanelContainer map={map} allLayers={allLayers} visibleLayers={visibleLayers} setVisibleLayers={setVisibleLayers} />
 					</SplitPane>
 				</>
 

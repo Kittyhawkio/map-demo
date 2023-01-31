@@ -1,7 +1,8 @@
-import { Divider } from '@mui/material';
+import {Divider, Switch, Typography, Accordion, AccordionSummary, AccordionDetails} from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { $primary, $white } from 'styles/colors';
-import { aboutLink, termsLink } from 'constants/appConstants';
+import {$primary, $white} from 'styles/colors';
+import {aboutLink, termsLink} from 'constants/appConstants';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const styles = {
     detailPanelContainer: {
@@ -30,13 +31,18 @@ const styles = {
         cursor: 'pointer',
         color: $primary,
         fontSize: 16
+    },
+    toggleContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '20px'
     }
 };
 
-const RightPanelContainer = () => {
-
+const RightPanelContainer = ({map, allLayers, visibleLayers, setVisibleLayers}) => {
     const useStyles = makeStyles(styles);
     const classes = useStyles();
+    const visibleLayerIds = visibleLayers.map(l => l.id);
 
     const handleClickAboutAloft = () => {
         window.open(aboutLink);
@@ -46,10 +52,44 @@ const RightPanelContainer = () => {
         window.open(termsLink);
     };
 
+    const handleToggleLayer = (layer) => {
+        const layerIdIndex = visibleLayerIds.findIndex(id => id === layer.id);
+        if (layerIdIndex > -1) {
+            //Layer is on - turn off
+            const updated = [...visibleLayers];
+            updated.splice(layerIdIndex, 1)
+            setVisibleLayers(updated)
+        } else {
+            //Layer is off - turn on
+            const updated = [...visibleLayers, layer];
+            setVisibleLayers(updated)
+        }
+    }
+
     return <div className={classes.detailPanelContainer}>
 
+        <div className={classes.toggleContainer}>
+            <Typography variant="h4">Layers</Typography>
+            <Divider/>
+            {allLayers.map(l => {
+                console.log('l',l)
+                return <Accordion id={l.id}
+
+                >
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}>
+                        {l.id} <Switch onChange={() => handleToggleLayer(l)}
+                                       checked={visibleLayerIds.includes(l.id)}/>
+                    </AccordionSummary>
+                    <AccordionDetails>
+
+                    </AccordionDetails>
+                </Accordion>
+            })}
+        </div>
+
         <div className={classes.footer}>
-            <Divider className={classes.divider} />
+            <Divider className={classes.divider}/>
             <div className={classes.footerLinks}>
                 <div className={classes.link} onClick={handleClickAboutAloft}>
                     About Aloft
