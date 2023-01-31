@@ -23,9 +23,9 @@ const MainContainer = () => {
 	const [map, setMap] = useState(null);
 	const [mapLayers, setMapLayers] = useState([]);
 	const [mapSources, setMapSources] = useState([]);
-	console.log('layers: ', mapLayers)
-	console.log('sources: ', mapSources)
-	console.log('map: ', map)
+	// console.log('layers: ', mapLayers)
+	// console.log('sources: ', mapSources)
+	// console.log('map: ', map)
 
 	const detailPaneSize = getDetailPaneSizeFromLS();
 

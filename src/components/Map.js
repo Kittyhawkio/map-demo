@@ -9,7 +9,18 @@ const Map = ReactMapboxGl({
     accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN, //TODO replace with LS
     doubleClickZoom: false,
     dragRotate: true,
-    attributionControl: false
+    attributionControl: false,
+    transformRequest: (url, resourceType) => {
+        if ((resourceType === 'Source' || resourceType === 'Tile' ) && url.startsWith('https://maps.')) {
+            return {
+                url: url,
+                headers: {
+                    'Authorization': 'Bearer ' + process.env.REACT_APP_ALOFT_TOKEN, //TODO replace with LS
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            };
+        }
+    }
 });
 
 export default Map;
