@@ -48,8 +48,6 @@ const RightPanelContainer = () => {
 
     return <div className={classes.detailPanelContainer}>
 
-        Right panel
-
         <div className={classes.footer}>
             <Divider className={classes.divider} />
             <div className={classes.footerLinks}>
