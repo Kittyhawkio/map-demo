@@ -1,10 +1,9 @@
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import {addMapControls} from "actions/mapbox";
 import Map from 'components/Map'
 import PropTypes from 'prop-types'
 import {Layer, Source} from 'react-mapbox-gl';
-import {$elevated, $success} from "styles/colors";
 
 const styles = {
 	mapContainer: {

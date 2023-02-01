@@ -8,6 +8,7 @@ import {
 	saveDetailPaneSizeToLS
 } from 'actions/localStorage';
 import {fetchMapLayersAndSources} from "apis/airspace.api";
+import {transformLayers} from "utils/helpers";
 
 const styles = {
 	mainContainer: {
@@ -36,8 +37,9 @@ const MainContainer = () => {
 
 		const getMapLayersAndSources = async () => {
 			const {sources, layers} = await fetchMapLayersAndSources();
-			setAllLayers(layers);
-			setVisibleLayers(layers)
+			const layersWithAddedData = transformLayers(layers);
+			setAllLayers(layersWithAddedData);
+			setVisibleLayers(layersWithAddedData)
 			setSources(sources)
 		}
 
@@ -56,7 +58,7 @@ const MainContainer = () => {
 						primary={'second'}
 					>
 							<MapContainer widthOffset={pane2Width} sources={sources} layers={visibleLayers} map={map} setMap={setMap} />
-							<RightPanelContainer map={map} allLayers={allLayers} visibleLayers={visibleLayers} setVisibleLayers={setVisibleLayers} />
+							<RightPanelContainer map={map} allLayers={allLayers} visibleLayers={visibleLayers} setVisibleLayers={setVisibleLayers} setAllLayers={setAllLayers} />
 					</SplitPane>
 				</>
 

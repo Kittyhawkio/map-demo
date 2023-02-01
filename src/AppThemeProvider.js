@@ -42,12 +42,6 @@ const AppThemeProvider = ({ children }) => {
 					}
 				`
 			},
-			MuiSlider: {
-				styleOverrides: {
-					track: { backgroundColor: '#fff' },
-					thumb: { backgroundColor: '#fff' }
-				}
-			},
 			MuiLink: {
 				defaultProps: {
 					underline: 'hover'
