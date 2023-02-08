@@ -3,6 +3,9 @@ import {
     AccordionDetails,
     AccordionSummary,
     Button,
+    Card,
+    CardContent,
+    CardHeader,
     Divider,
     FormControlLabel,
     Link,
@@ -12,7 +15,8 @@ import {
     Slider,
     Switch,
     TextField,
-    Typography
+    Typography,
+    Box
 } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import {$primary, $white} from 'styles/colors';
@@ -21,8 +25,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {SketchPicker} from 'react-color';
 import {useState} from 'react'
 import {updateLayerStyles} from "utils/helpers";
-import {startCase} from 'lodash-es';
 import PropTypes from 'prop-types'
+import {startCase} from 'lodash-es'
 
 const styles = {
     detailPanelContainer: {
@@ -61,12 +65,13 @@ const styles = {
         display: 'flex',
         flexDirection: 'column',
         padding: '20px',
-        height: 'calc(100% - 151px - 50px)',
-        overflow: 'auto'
+        height: 'calc(100% - 209px - 150px - 135.5px)',
+        overflowY: 'scroll'
     },
-    accordionTitle: {
-        width: '33%',
-        flexShrink: 0
+    accordion: {
+        '&:before': {
+            display: 'none'
+        }
     },
     accordionSubtitle: {
         color: 'text.secondary'
@@ -97,6 +102,10 @@ const styles = {
         padding: '20px',
         display: 'flex',
         gridGap: '20px'
+    },
+    card: {
+        marginBottom: '20px',
+        overflow: 'visible'
     }
 };
 
@@ -282,73 +291,72 @@ const RightPanelContainer = ({
         <Divider/>
         <div className={classes.accordionContainer}>
             {allLayers.map(l => {
-                return <Accordion key={l.id} id={l.id}>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon/>}>
-                        <FormControlLabel control={
-                            <Switch
-                                onChange={() => handleToggleLayer(l)}
-                                checked={visibleLayerIds.includes(l.id)}/>}
-                                          label={l.id}
-                        />
-                    </AccordionSummary>
-                    <Divider/>
-                    <AccordionDetails className={classes.accordionDetails}>
-                        <Typography variant="overline" component={Link}
-                                    href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/"
-                                    target="_blank">Type</Typography>
-                        <Typography variant="subtitle1">{startCase(l.type)}</Typography>
-                        {(l.type === 'fill' || l.type === 'circle') &&
-                        <>
-                            <Typography variant="overline" component={Link}
-                                        href={`https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#${l.type === 'fill' ? 'paint-fill-fill-color' : 'paint-circle-circle-color'}`}
-                                        target="_blank">{l.type === 'fill' ? 'Fill' : 'Circle'} Color</Typography>
-                            <Button
-                                className={classes.colorButton}
-                                variant='outlined'
-                                onClick={(e) => handleOpenColors(e, l)}
-                                startIcon={l.editableColor &&
-                                <div style={{backgroundColor: l.editableColor, height: 20, width: 20}}/>}
-                            >
-                                {!l.editableColor ? 'Select Color' : l.editableColor}
-                            </Button>
-                            <Typography variant="overline" component={Link}
-                                        href={`https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#${l.type === 'fill' ? 'paint-fill-fill-opacity' : 'paint-circle-circle-opacity'}`}
-                                        target="_blank">{l.type === 'fill' ? 'Fill' : 'Circle'} Opacity</Typography>
-                            <Slider
-                                className={classes.slider}
-                                defaultValue={l.editableOpacity}
-                                step={.05}
-                                marks
-                                min={0}
-                                max={1}
-                                onChange={(e, opacity) => handleOpacityChange(opacity, l)}
-                                valueLabelDisplay="auto"
-                            />
-                            <Typography variant="overline" component={Link}
-                                        href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#maxzoom"
-                                        target="_blank">Max Zoom</Typography>
-                            <TextField variant="standard" type="number" value={l.editableMaxZoom}
-                                       className={classes.textField}
-                                       inputProps={{
-                                           max: 24,
-                                           min: 0
-                                       }}
-                                       onChange={(e) => handleMaxZoomChange(e, l)}/>
-                            <Typography variant="overline" component={Link}
-                                        href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#minzoom"
-                                        target="_blank">Min Zoom</Typography>
-                            <TextField variant="standard" type="number" value={l.editableMinZoom}
-                                       className={classes.textField}
-                                       inputProps={{
-                                           max: 24,
-                                           min: 0
-                                       }}
-                                       onChange={(e) => handleMinZoomChange(e, l)}/>
-                        </>
-                        }
-                    </AccordionDetails>
-                </Accordion>
+
+                return <Card sx={styles.card}>
+                    <CardHeader title={l.id}
+                                action={<Switch onChange={() => handleToggleLayer(l)} checked={visibleLayerIds.includes(l.id)}/>}>
+
+                    </CardHeader>
+                    <Accordion elevation={0} sx={styles.accordion} key={l.id} id={l.id}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon/>}>
+                        </AccordionSummary>
+                        <Divider/>
+                        <AccordionDetails className={classes.accordionDetails}>
+                            <Typography variant="overline" component={Link} href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/" target="_blank">Type</Typography>
+                            <Typography variant="subtitle1">{startCase(l.type)}</Typography>
+                            {(l.type === 'fill' || l.type === 'circle') &&
+                            <>
+                                <Typography variant="overline" component={Link}
+                                            href={`https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#${l.type === 'fill' ? 'paint-fill-fill-color' : 'paint-circle-circle-color'}`}
+                                            target="_blank">{l.type === 'fill' ? 'Fill' : 'Circle'} Color</Typography>
+                                <Button
+                                    className={classes.colorButton}
+                                    variant='outlined'
+                                    onClick={(e) => handleOpenColors(e, l)}
+                                    startIcon={l.editableColor &&
+                                    <div style={{backgroundColor: l.editableColor, height: 20, width: 20}}/>}
+                                >
+                                    {!l.editableColor ? 'Select Color' : l.editableColor}
+                                </Button>
+                                <Typography variant="overline" component={Link}
+                                            href={`https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#${l.type === 'fill' ? 'paint-fill-fill-opacity' : 'paint-circle-circle-opacity'}`}
+                                            target="_blank">{l.type === 'fill' ? 'Fill' : 'Circle'} Opacity</Typography>
+                                <Slider
+                                    className={classes.slider}
+                                    defaultValue={l.editableOpacity}
+                                    step={.05}
+                                    marks
+                                    min={0}
+                                    max={1}
+                                    onChange={(e, opacity) => handleOpacityChange(opacity, l)}
+                                    valueLabelDisplay="auto"
+                                />
+                                <Typography variant="overline" component={Link}
+                                            href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#maxzoom"
+                                            target="_blank">Max Zoom</Typography>
+                                <TextField variant="standard" type="number" value={l.editableMaxZoom}
+                                           className={classes.textField}
+                                           inputProps={{
+                                               max: 24,
+                                               min: 0
+                                           }}
+                                           onChange={(e) => handleMaxZoomChange(e, l)}/>
+                                <Typography variant="overline" component={Link}
+                                            href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#minzoom"
+                                            target="_blank">Min Zoom</Typography>
+                                <TextField variant="standard" type="number" value={l.editableMinZoom}
+                                           className={classes.textField}
+                                           inputProps={{
+                                               max: 24,
+                                               min: 0
+                                           }}
+                                           onChange={(e) => handleMinZoomChange(e, l)}/>
+                            </>
+                            }
+                        </AccordionDetails>
+                    </Accordion>
+                </Card>
             })}
         </div>
         <div className={classes.footer}>
