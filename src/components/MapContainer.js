@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import {addMapControls} from "actions/mapbox";
 import Map from 'components/Map'
@@ -12,9 +12,12 @@ const styles = {
 	}
 };
 
-const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, setMapZoom, mapZoom, mapStyle}) => {
+const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, setMapZoom, mapZoom, mapStyle, mapCenter, setMapCenter}) => {
+	console.log('visible layers: ', layers)
 	const useStyles = makeStyles(styles);
 	const classes = useStyles();
+
+
 
 	const onStyleLoad = mapObject => {
 		addMapControls(mapObject);
@@ -22,6 +25,15 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 		setMapStyle(mapObject.getStyle().sprite.split('mapbox/')[1])
 		setMapZoom(mapObject.getZoom())
 	};
+
+	const handleMove = (mapObject) => {
+		const {lng, lat} = mapObject.getCenter();
+		setMapCenter([lng, lat])
+	}
+
+	const handleZoom = (mapObject) => {
+		setMapZoom(mapObject.getZoom())
+	}
 
 	useEffect(() => {
 		if (map) {
@@ -38,8 +50,10 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 					width: '100%'
 				}}
 				zoom={[mapZoom]}
-				center={[-75.163526, 39.952724]}
+				center={mapCenter}
 				onStyleLoad={onStyleLoad}
+				onMoveEnd={handleMove}
+				onZoomEnd={handleZoom}
 			>
 			{sources.map(s => {
 				return <Source key={s.id} id={s.id} tileJsonSource={{
@@ -49,7 +63,7 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 			})}
 			{
 				layers.map(l => {
-					return <Layer key={l.id} {...l}  sourceId={l.source} sourceLayer={l['source-layer']} type={l.type} paint={l.paint}  />
+					return <Layer key={l.id} sourceId={l.source} sourceLayer={l['source-layer']} type={l.type} paint={l.paint} maxZoom={l.maxzoom} minZoom={l.minzoom}  />
 			})}
 			</Map>}
 		</div>
@@ -64,7 +78,9 @@ MapContainer.propTypes = {
 	setMap: PropTypes.func.isRequired,
 	setMapStyle: PropTypes.func.isRequired,
 	mapZoom: PropTypes.func.isRequired,
-	mapStyle: PropTypes.string.isRequired
+	mapStyle: PropTypes.string.isRequired,
+	mapCenter: PropTypes.array.isRequired,
+	setMapCenter: PropTypes.func.isRequired
 }
 
 export default MapContainer;

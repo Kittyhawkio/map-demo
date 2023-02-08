@@ -24,9 +24,11 @@ const MainContainer = () => {
 	const [map, setMap] = useState(null);
 	const [allLayers, setAllLayers] = useState([]);
 	const [sources, setSources] = useState([]);
+	console.log('sources', sources)
 	const [visibleLayers, setVisibleLayers] = useState([])
 	const [mapStyle, setMapStyle] = useState('streets-v12')
 	const [mapZoom, setMapZoom] = useState(9)
+	const [mapCenter, setMapCenter] = useState([-75.163526, 39.952724])
 
 	const detailPaneSize = getDetailPaneSizeFromLS();
 
@@ -69,8 +71,11 @@ const MainContainer = () => {
 								setMapZoom={setMapZoom}
 								mapStyle={mapStyle}
 								setMapStyle={setMapStyle}
+								mapCenter={mapCenter}
+								setMapCenter={setMapCenter}
 							/>
 							<RightPanelContainer
+								map={map}
 								allLayers={allLayers}
 								visibleLayers={visibleLayers}
 								setVisibleLayers={setVisibleLayers}

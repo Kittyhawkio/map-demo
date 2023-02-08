@@ -108,7 +108,8 @@ const RightPanelContainer = ({
                                  mapStyle,
                                  mapZoom,
                                  setMapStyle,
-                                 setMapZoom
+                                 setMapZoom,
+    map
                              }) => {
     const useStyles = makeStyles(styles);
     const classes = useStyles();
@@ -212,7 +213,21 @@ const RightPanelContainer = ({
                 maxzoom: zoom
             }
         })
-        console.log('updated visible: ', updatedVisibleLayers)
+        setVisibleLayers(updatedVisibleLayers)
+        setAllLayers(updatedAllLayers)
+    };
+
+    const handleMinZoomChange = (e, layer) => {
+        const zoom = Number(e.target.value);
+        const {updatedVisibleLayers, updatedAllLayers} = updateLayerStyles({
+            allLayers: allLayers,
+            visibleLayers: visibleLayers,
+            layerId: layer.id,
+            properties: {
+                editableMinZoom: zoom,
+                minzoom: zoom
+            }
+        })
         setVisibleLayers(updatedVisibleLayers)
         setAllLayers(updatedAllLayers)
     };
@@ -320,6 +335,16 @@ const RightPanelContainer = ({
                                            min: 0
                                        }}
                                        onChange={(e) => handleMaxZoomChange(e, l)}/>
+                            <Typography variant="overline" component={Link}
+                                        href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#minzoom"
+                                        target="_blank">Min Zoom</Typography>
+                            <TextField variant="standard" type="number" value={l.editableMinZoom}
+                                       className={classes.textField}
+                                       inputProps={{
+                                           max: 24,
+                                           min: 0
+                                       }}
+                                       onChange={(e) => handleMinZoomChange(e, l)}/>
                         </>
                         }
                     </AccordionDetails>
