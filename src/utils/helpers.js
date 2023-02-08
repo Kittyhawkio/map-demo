@@ -9,12 +9,20 @@ export const transformLayers = (layers) => {
         const defaultMinZoom = layer.minzoom;
 
         if (layer.type === 'fill') {
-            defaultOpacity = layer.paint['fill-opacity'];
-            defaultColor = layer.paint['fill-color'];
+            if (layer?.paint['fill-opacity']) {
+                defaultOpacity = layer.paint['fill-opacity'];
+            }
+            if (layer?.paint['fill-color']) {
+                defaultColor = layer.paint['fill-color'];
+            }
         }
         if (layer.type === 'circle') {
-            defaultOpacity = layer.paint['circle-opacity'];
-            defaultColor = layer.paint['circle-color'];
+            if (layer?.paint['circle-opacity']) {
+                defaultOpacity = layer.paint['circle-opacity'];
+            }
+            if (layer?.paint['circle-color']) {
+                defaultColor = layer.paint['circle-color'];
+            }
         }
 
         return {

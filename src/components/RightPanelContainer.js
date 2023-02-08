@@ -6,13 +6,13 @@ import {
     Divider,
     FormControlLabel,
     Link,
+    MenuItem,
     Popover,
     Select,
     Slider,
     Switch,
     TextField,
-    Typography,
-    MenuItem
+    Typography
 } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import {$primary, $white} from 'styles/colors';
@@ -22,6 +22,7 @@ import {SketchPicker} from 'react-color';
 import {useState} from 'react'
 import {updateLayerStyles} from "utils/helpers";
 import {startCase} from 'lodash-es';
+import PropTypes from 'prop-types'
 
 const styles = {
     detailPanelContainer: {
@@ -85,23 +86,37 @@ const styles = {
         width: '100px'
     },
     mapSettingsContainer: {
+        paddingTop: '0px',
         padding: '40px',
         display: 'grid',
         overflow: 'auto',
         gridTemplateColumns: '100px auto',
         gridGap: '20px'
     },
+    buttonsContainer: {
+        padding: '20px',
+        display: 'flex',
+        gridGap: '20px'
+    }
 };
 
-const RightPanelContainer = ({map, allLayers, visibleLayers, setVisibleLayers, setAllLayers}) => {
+const RightPanelContainer = ({
+                                 allLayers,
+                                 visibleLayers,
+                                 setVisibleLayers,
+                                 setAllLayers,
+                                 mapStyle,
+                                 mapZoom,
+                                 setMapStyle,
+                                 setMapZoom
+                             }) => {
     const useStyles = makeStyles(styles);
     const classes = useStyles();
     const visibleLayerIds = visibleLayers.map(l => l.id);
     const [colorPickerAnchorEl, setColorPickerAnchorEl] = useState(null);
     const [editingLayer, setEditingLayer] = useState(null)
     const colorPickerOpen = Boolean(colorPickerAnchorEl);
-    const [mapStyle, setMapStyle] = useState(map.getStyle().sprite.split('mapbox/')[1])
-    const [mapZoom, setMapZoom] = useState(map.getZoom())
+
 
     const handleClickAboutAloft = () => {
         window.open(aboutLink);
@@ -204,13 +219,18 @@ const RightPanelContainer = ({map, allLayers, visibleLayers, setVisibleLayers, s
 
     const handleStyleChange = (e) => {
         setMapStyle( e.target.value)
-        map.setStyle('mapbox://styles/mapbox/' + e.target.value)
     };
 
     const handleZoomChange = (e) => {
         setMapZoom(Number(e.target.value))
-      map.setZoom(Number(e.target.value))
     };
+
+    const handleTurnAllLayersOff = () => {
+      setVisibleLayers([]);
+    };
+    const handleTurnAllLayersOn = () => {
+        setVisibleLayers(allLayers)
+    }
 
     return <div className={classes.detailPanelContainer}>
         <div className={classes.sectionTitleContainer}>
@@ -225,7 +245,7 @@ const RightPanelContainer = ({map, allLayers, visibleLayers, setVisibleLayers, s
                            min: 0
                        }}
                        onChange={handleZoomChange}/>
-            <Typography variant="overline">Style</Typography>
+            <Typography variant="overline" component={Link} href="https://docs.mapbox.com/api/maps/styles/#mapbox-styles" target="_blank">Style</Typography>
             <Select variant="standard" onChange={handleStyleChange} value={mapStyle}>
                 <MenuItem value="light-v11">Light</MenuItem>
                 <MenuItem value="dark-v11">Dark</MenuItem>
@@ -233,7 +253,6 @@ const RightPanelContainer = ({map, allLayers, visibleLayers, setVisibleLayers, s
                 <MenuItem value="satellite-streets-v12">Satellite Streets</MenuItem>
                 <MenuItem value="outdoors-v12">Outdoors</MenuItem>
             </Select>
-            <Typography variant="subtitle1">{map?.getZoom()}</Typography>
         </div>
         <Divider/>
         <div className={classes.sectionTitleContainer}>
@@ -241,10 +260,14 @@ const RightPanelContainer = ({map, allLayers, visibleLayers, setVisibleLayers, s
             <Typography variant="subtitle1">Use the toggles to control a layer's visibility. Expand each layer to
                 customize its styling.</Typography>
         </div>
+        <div className={classes.buttonsContainer}>
+            <Button variant="contained" onClick={handleTurnAllLayersOff}>All Layers Off</Button>
+            <Button variant="contained" onClick={handleTurnAllLayersOn}>All Layers On</Button>
+        </div>
         <Divider/>
         <div className={classes.accordionContainer}>
             {allLayers.map(l => {
-                return <Accordion key={l.id} id={l.id} expanded>
+                return <Accordion key={l.id} id={l.id}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon/>}>
                         <FormControlLabel control={
@@ -331,5 +354,16 @@ const RightPanelContainer = ({map, allLayers, visibleLayers, setVisibleLayers, s
         </Popover>
     </div>
 };
+
+RightPanelContainer.propTypes = {
+    allLayers: PropTypes.array.isRequired,
+    visibleLayers: PropTypes.array.isRequired,
+    setVisibleLayers: PropTypes.func.isRequired,
+    setAllLayers: PropTypes.func.isRequired,
+    mapZoom: PropTypes.number.isRequired,
+    setMapZoom: PropTypes.func.isRequired,
+    mapStyle: PropTypes.string.isRequired,
+    setMapStyle: PropTypes.func.isRequired
+}
 
 export default RightPanelContainer;

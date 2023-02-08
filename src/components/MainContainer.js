@@ -25,6 +25,8 @@ const MainContainer = () => {
 	const [allLayers, setAllLayers] = useState([]);
 	const [sources, setSources] = useState([]);
 	const [visibleLayers, setVisibleLayers] = useState([])
+	const [mapStyle, setMapStyle] = useState('streets-v12')
+	const [mapZoom, setMapZoom] = useState(9)
 
 	const detailPaneSize = getDetailPaneSizeFromLS();
 
@@ -57,8 +59,27 @@ const MainContainer = () => {
 						size={detailPaneSize}
 						primary={'second'}
 					>
-							<MapContainer widthOffset={pane2Width} sources={sources} layers={visibleLayers} map={map} setMap={setMap} />
-							<RightPanelContainer map={map} allLayers={allLayers} visibleLayers={visibleLayers} setVisibleLayers={setVisibleLayers} setAllLayers={setAllLayers} />
+							<MapContainer
+								widthOffset={pane2Width}
+								sources={sources}
+								layers={visibleLayers}
+								map={map}
+								setMap={setMap}
+								mapZoom={mapZoom}
+								setMapZoom={setMapZoom}
+								mapStyle={mapStyle}
+								setMapStyle={setMapStyle}
+							/>
+							<RightPanelContainer
+								allLayers={allLayers}
+								visibleLayers={visibleLayers}
+								setVisibleLayers={setVisibleLayers}
+								setAllLayers={setAllLayers}
+								mapStyle={mapStyle}
+								mapZoom={mapZoom}
+								setMapStyle={setMapStyle}
+								setMapZoom={setMapZoom}
+							/>
 					</SplitPane>
 				</>
 

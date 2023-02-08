@@ -12,13 +12,15 @@ const styles = {
 	}
 };
 
-const MapContainer = ({widthOffset, sources, layers, map, setMap}) => {
+const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, setMapZoom, mapZoom, mapStyle}) => {
 	const useStyles = makeStyles(styles);
 	const classes = useStyles();
 
 	const onStyleLoad = mapObject => {
 		addMapControls(mapObject);
 		setMap(mapObject);
+		setMapStyle(mapObject.getStyle().sprite.split('mapbox/')[1])
+		setMapZoom(mapObject.getZoom())
 	};
 
 	useEffect(() => {
@@ -30,12 +32,12 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap}) => {
 	return (
 		<div className={classes.mapContainer}>
 			{sources.length > 0 && <Map
-				style="mapbox://styles/mapbox/streets-v12"
+				style={`mapbox://styles/mapbox/${mapStyle}`}
 				containerStyle={{
 					height: '100%',
 					width: '100%'
 				}}
-				zoom={[9]}
+				zoom={[mapZoom]}
 				center={[-75.163526, 39.952724]}
 				onStyleLoad={onStyleLoad}
 			>
@@ -47,7 +49,7 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap}) => {
 			})}
 			{
 				layers.map(l => {
-					return <Layer key={l.id} sourceId={l.source} sourceLayer={l['source-layer']} type={l.type} paint={l.paint}  />
+					return <Layer key={l.id} {...l}  sourceId={l.source} sourceLayer={l['source-layer']} type={l.type} paint={l.paint}  />
 			})}
 			</Map>}
 		</div>
@@ -59,7 +61,10 @@ MapContainer.propTypes = {
 	sources: PropTypes.array.isRequired,
 	layers: PropTypes.array.isRequired,
 	map: PropTypes.object,
-	setMap: PropTypes.func.isRequired
+	setMap: PropTypes.func.isRequired,
+	setMapStyle: PropTypes.func.isRequired,
+	mapZoom: PropTypes.func.isRequired,
+	mapStyle: PropTypes.string.isRequired
 }
 
 export default MapContainer;
