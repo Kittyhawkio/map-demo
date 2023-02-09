@@ -326,9 +326,8 @@ const RightPanelContainer = ({
                             <Switch onChange={() => handleToggleLayer(l)}
                                     checked={visibleLayerIds.includes(l.id)}/>
                             <ListItemText primary={l.id}/>
-                            <IconButton>
-                                {open ? <ExpandLess onClick={() => handleToggleCollapse(l)}/> :
-                                    <ExpandMore onClick={() => handleToggleCollapse(l)}/>}
+                            <IconButton onClick={() => handleToggleCollapse(l)}>
+                                {open ? <ExpandLess/> : <ExpandMore/>}
                             </IconButton>
 
                         </ListItem>

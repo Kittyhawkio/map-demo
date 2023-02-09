@@ -92,7 +92,7 @@ MapContainer.propTypes = {
 	map: PropTypes.object,
 	setMap: PropTypes.func.isRequired,
 	setMapStyle: PropTypes.func.isRequired,
-	mapZoom: PropTypes.func.isRequired,
+	mapZoom: PropTypes.number.isRequired,
 	mapStyle: PropTypes.string.isRequired,
 	mapCenter: PropTypes.array.isRequired,
 	setMapCenter: PropTypes.func.isRequired,
