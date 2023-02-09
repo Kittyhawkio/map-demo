@@ -1,5 +1,3 @@
-import {$success} from "styles/colors";
-
 export const transformLayers = (layers) => {
     return layers.map(layer => {
 
@@ -7,6 +5,10 @@ export const transformLayers = (layers) => {
         let defaultColor = ''
         const defaultMaxZoom = layer.maxzoom;
         const defaultMinZoom = layer.minzoom;
+        let defaultCircleRadius = 20;
+        let paint = {
+            ...layer.paint
+        }
 
         if (layer.type === 'fill') {
             if (layer?.paint['fill-opacity']) {
@@ -23,10 +25,16 @@ export const transformLayers = (layers) => {
             if (layer?.paint['circle-color']) {
                 defaultColor = layer.paint['circle-color'];
             }
+            if (Number(layer?.paint['circle-radius'])) {
+                defaultCircleRadius = layer.paint['circle-radius']
+            } else {
+                paint['circle-radius'] = defaultCircleRadius
+            }
         }
 
         return {
             ...layer,
+            paint,
             defaultColor,
             defaultOpacity,
             defaultMaxZoom,
@@ -34,7 +42,8 @@ export const transformLayers = (layers) => {
             editableColor: '',
             editableOpacity: 1,
             editableMaxZoom: defaultMaxZoom,
-            editableMinZoom: defaultMinZoom
+            editableMinZoom: defaultMinZoom,
+            editableCircleRadius: defaultCircleRadius
         }
 
 

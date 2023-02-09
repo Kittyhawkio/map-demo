@@ -1,27 +1,26 @@
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
     Button,
-    Card,
-    CardContent,
-    CardHeader,
+    Box,
+    Collapse,
     Divider,
-    FormControlLabel,
+    IconButton,
     Link,
+    List,
+    ListItem,
+    ListItemText,
     MenuItem,
     Popover,
     Select,
     Slider,
     Switch,
     TextField,
-    Typography,
-    Box
+    Typography
 } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import {$primary, $white} from 'styles/colors';
 import {aboutLink, termsLink} from 'constants/appConstants';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import ExpandLess from '@mui/icons-material/ExpandLess';
 import {SketchPicker} from 'react-color';
 import {useState} from 'react'
 import {updateLayerStyles} from "utils/helpers";
@@ -61,25 +60,18 @@ const styles = {
         flexDirection: 'column',
         padding: '20px'
     },
-    accordionContainer: {
+    listContainer: {
         display: 'flex',
         flexDirection: 'column',
         padding: '20px',
         height: 'calc(100% - 209px - 150px - 135.5px)',
-        overflowY: 'scroll'
+        overflowY: 'auto'
     },
-    accordion: {
-        '&:before': {
-            display: 'none'
-        }
-    },
-    accordionSubtitle: {
-        color: 'text.secondary'
-    },
-    accordionDetails: {
+    listDetails: {
         display: 'grid',
         gridTemplateColumns: '100px auto',
-        gridGap: '20px'
+        gridGap: '20px',
+        padding: '20px'
     },
     colorButton: {
         width: 'fit-content'
@@ -126,6 +118,7 @@ const RightPanelContainer = ({
     const [colorPickerAnchorEl, setColorPickerAnchorEl] = useState(null);
     const [editingLayer, setEditingLayer] = useState(null)
     const colorPickerOpen = Boolean(colorPickerAnchorEl);
+    const [openLayers, setOpenLayers] = useState([])
 
 
     const handleClickAboutAloft = () => {
@@ -149,6 +142,17 @@ const RightPanelContainer = ({
             setVisibleLayers(updated)
         }
     }
+
+    const handleToggleCollapse = (l) => {
+        let updatedOpenLayers = [...openLayers]
+        if (openLayers.includes(l.id)) {
+            const toRemove = updatedOpenLayers.findIndex(layer => layer.id === l.id);
+            updatedOpenLayers.splice(toRemove, 1);
+        } else {
+            updatedOpenLayers.push(l.id);
+        }
+        setOpenLayers(updatedOpenLayers)
+    };
 
     const handleOpenColors = (e, l) => {
         setColorPickerAnchorEl(e.currentTarget);
@@ -241,6 +245,26 @@ const RightPanelContainer = ({
         setAllLayers(updatedAllLayers)
     };
 
+    const handleCircleRadiusChange = (e, layer) => {
+        const radius = Number(e.target.value);
+        let paint = {
+            ...layer.paint,
+        };
+        paint['circle-radius'] = radius;
+        const {updatedVisibleLayers, updatedAllLayers} = updateLayerStyles({
+            allLayers: allLayers,
+            visibleLayers: visibleLayers,
+            layerId: layer.id,
+            properties: {
+                paint,
+                editableCircleRadius: radius,
+
+            }
+        })
+        setVisibleLayers(updatedVisibleLayers)
+        setAllLayers(updatedAllLayers)
+    }
+
     const handleStyleChange = (e) => {
         setMapStyle( e.target.value)
     };
@@ -289,75 +313,90 @@ const RightPanelContainer = ({
             <Button variant="contained" onClick={handleTurnAllLayersOn}>All Layers On</Button>
         </div>
         <Divider/>
-        <div className={classes.accordionContainer}>
-            {allLayers.map(l => {
+        <div className={classes.listContainer}>
+            <List>
+                {allLayers.map((l, idx) => {
+                    const open = openLayers.includes(l.id);
+                    return <>
+                        <ListItem disableGutters>
+                            <Switch onChange={() => handleToggleLayer(l)}
+                                    checked={visibleLayerIds.includes(l.id)}/>
+                        <ListItemText primary={l.id}/>
+                            <IconButton>
+                                {open ? <ExpandLess onClick={() => handleToggleCollapse(l)}/> : <ExpandMore onClick={() => handleToggleCollapse(l)}/>}
+                            </IconButton>
 
-                return <Card sx={styles.card}>
-                    <CardHeader title={l.id}
-                                action={<Switch onChange={() => handleToggleLayer(l)} checked={visibleLayerIds.includes(l.id)}/>}>
-
-                    </CardHeader>
-                    <Accordion elevation={0} sx={styles.accordion} key={l.id} id={l.id}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon/>}>
-                        </AccordionSummary>
-                        <Divider/>
-                        <AccordionDetails className={classes.accordionDetails}>
-                            <Typography variant="overline" component={Link} href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/" target="_blank">Type</Typography>
-                            <Typography variant="subtitle1">{startCase(l.type)}</Typography>
-                            {(l.type === 'fill' || l.type === 'circle') &&
-                            <>
-                                <Typography variant="overline" component={Link}
-                                            href={`https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#${l.type === 'fill' ? 'paint-fill-fill-color' : 'paint-circle-circle-color'}`}
-                                            target="_blank">{l.type === 'fill' ? 'Fill' : 'Circle'} Color</Typography>
-                                <Button
-                                    className={classes.colorButton}
-                                    variant='outlined'
-                                    onClick={(e) => handleOpenColors(e, l)}
-                                    startIcon={l.editableColor &&
-                                    <div style={{backgroundColor: l.editableColor, height: 20, width: 20}}/>}
-                                >
-                                    {!l.editableColor ? 'Select Color' : l.editableColor}
-                                </Button>
-                                <Typography variant="overline" component={Link}
-                                            href={`https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#${l.type === 'fill' ? 'paint-fill-fill-opacity' : 'paint-circle-circle-opacity'}`}
-                                            target="_blank">{l.type === 'fill' ? 'Fill' : 'Circle'} Opacity</Typography>
-                                <Slider
-                                    className={classes.slider}
-                                    defaultValue={l.editableOpacity}
-                                    step={.05}
-                                    marks
-                                    min={0}
-                                    max={1}
-                                    onChange={(e, opacity) => handleOpacityChange(opacity, l)}
-                                    valueLabelDisplay="auto"
-                                />
-                                <Typography variant="overline" component={Link}
-                                            href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#maxzoom"
-                                            target="_blank">Max Zoom</Typography>
-                                <TextField variant="standard" type="number" value={l.editableMaxZoom}
-                                           className={classes.textField}
-                                           inputProps={{
-                                               max: 24,
-                                               min: 0
-                                           }}
-                                           onChange={(e) => handleMaxZoomChange(e, l)}/>
-                                <Typography variant="overline" component={Link}
-                                            href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#minzoom"
-                                            target="_blank">Min Zoom</Typography>
-                                <TextField variant="standard" type="number" value={l.editableMinZoom}
-                                           className={classes.textField}
-                                           inputProps={{
-                                               max: 24,
-                                               min: 0
-                                           }}
-                                           onChange={(e) => handleMinZoomChange(e, l)}/>
-                            </>
-                            }
-                        </AccordionDetails>
-                    </Accordion>
-                </Card>
-            })}
+                    </ListItem>
+                        <Collapse in={open} >
+                            <Box sx={styles.listDetails}>
+                                <Typography variant="overline" component={Link} href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/" target="_blank">Type</Typography>
+                                <Typography variant="subtitle1">{startCase(l.type)}</Typography>
+                                {(l.type === 'fill' || l.type === 'circle') &&
+                                <>
+                                    <Typography variant="overline" component={Link}
+                                                href={`https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#${l.type === 'fill' ? 'paint-fill-fill-color' : 'paint-circle-circle-color'}`}
+                                                target="_blank">{l.type === 'fill' ? 'Fill' : 'Circle'} Color</Typography>
+                                    <Button
+                                        className={classes.colorButton}
+                                        variant='outlined'
+                                        onClick={(e) => handleOpenColors(e, l)}
+                                        startIcon={l.editableColor &&
+                                        <div style={{backgroundColor: l.editableColor, height: 20, width: 20}}/>}
+                                    >
+                                        {!l.editableColor ? 'Select Color' : l.editableColor}
+                                    </Button>
+                                    <Typography variant="overline" component={Link}
+                                                href={`https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#${l.type === 'fill' ? 'paint-fill-fill-opacity' : 'paint-circle-circle-opacity'}`}
+                                                target="_blank">{l.type === 'fill' ? 'Fill' : 'Circle'} Opacity</Typography>
+                                    <Slider
+                                        className={classes.slider}
+                                        defaultValue={l.editableOpacity}
+                                        step={.05}
+                                        marks
+                                        min={0}
+                                        max={1}
+                                        onChange={(e, opacity) => handleOpacityChange(opacity, l)}
+                                        valueLabelDisplay="auto"
+                                    />
+                                    <Typography variant="overline" component={Link}
+                                                href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#maxzoom"
+                                                target="_blank">Max Zoom</Typography>
+                                    <TextField variant="standard" type="number" value={l.editableMaxZoom}
+                                               className={classes.textField}
+                                               inputProps={{
+                                                   max: 24,
+                                                   min: 0
+                                               }}
+                                               onChange={(e) => handleMaxZoomChange(e, l)}/>
+                                    <Typography variant="overline" component={Link}
+                                                href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#minzoom"
+                                                target="_blank">Min Zoom</Typography>
+                                    <TextField variant="standard" type="number" value={l.editableMinZoom}
+                                               className={classes.textField}
+                                               inputProps={{
+                                                   max: 24,
+                                                   min: 0
+                                               }}
+                                               onChange={(e) => handleMinZoomChange(e, l)}/>
+                                </>
+                                }
+                                {l.type === 'circle' && <>
+                                    <Typography variant="overline" component={Link}
+                                                href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#paint-circle-circle-radius"
+                                                target="_blank">Circle Radius</Typography>
+                                    <TextField variant="standard" type="number" value={l.editableCircleRadius}
+                                               className={classes.textField}
+                                               inputProps={{
+                                                   min: 0
+                                               }}
+                                               onChange={(e) => handleCircleRadiusChange(e, l)}/>
+                                </>}
+                            </Box>
+                        </Collapse>
+                        {idx !== allLayers.length -1  && <Divider/>}
+                    </>
+                })}
+            </List>
         </div>
         <div className={classes.footer}>
             <Divider className={classes.divider}/>
