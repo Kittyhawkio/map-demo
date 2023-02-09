@@ -69,3 +69,4 @@ export const updateLayerStyles = ({allLayers, layerId, visibleLayers, properties
 
     return {updatedAllLayers, updatedVisibleLayers}
 }
+

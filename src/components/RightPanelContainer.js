@@ -1,6 +1,6 @@
 import {
-    Button,
     Box,
+    Button,
     Collapse,
     Divider,
     IconButton,
@@ -98,6 +98,10 @@ const styles = {
     card: {
         marginBottom: '20px',
         overflow: 'visible'
+    },
+    button: {
+        textTransform: 'none',
+        fontSize: 16
     }
 };
 
@@ -110,7 +114,7 @@ const RightPanelContainer = ({
                                  mapZoom,
                                  setMapStyle,
                                  setMapZoom,
-    map
+                                 openSetup
                              }) => {
     const useStyles = makeStyles(styles);
     const classes = useStyles();
@@ -317,17 +321,18 @@ const RightPanelContainer = ({
             <List>
                 {allLayers.map((l, idx) => {
                     const open = openLayers.includes(l.id);
-                    return <>
+                    return <Box key={l.id}>
                         <ListItem disableGutters>
                             <Switch onChange={() => handleToggleLayer(l)}
                                     checked={visibleLayerIds.includes(l.id)}/>
-                        <ListItemText primary={l.id}/>
+                            <ListItemText primary={l.id}/>
                             <IconButton>
-                                {open ? <ExpandLess onClick={() => handleToggleCollapse(l)}/> : <ExpandMore onClick={() => handleToggleCollapse(l)}/>}
+                                {open ? <ExpandLess onClick={() => handleToggleCollapse(l)}/> :
+                                    <ExpandMore onClick={() => handleToggleCollapse(l)}/>}
                             </IconButton>
 
-                    </ListItem>
-                        <Collapse in={open} >
+                        </ListItem>
+                        <Collapse in={open}>
                             <Box sx={styles.listDetails}>
                                 <Typography variant="overline" component={Link} href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/" target="_blank">Type</Typography>
                                 <Typography variant="subtitle1">{startCase(l.type)}</Typography>
@@ -393,8 +398,8 @@ const RightPanelContainer = ({
                                 </>}
                             </Box>
                         </Collapse>
-                        {idx !== allLayers.length -1  && <Divider/>}
-                    </>
+                        {idx !== allLayers.length - 1 && <Divider/>}
+                    </Box>
                 })}
             </List>
         </div>
@@ -407,6 +412,7 @@ const RightPanelContainer = ({
                 <div className={classes.link} onClick={handleClickTerms}>
                     Terms of Use
                 </div>
+                <Button className={classes.button} onClick={openSetup}>Open Setup</Button>
             </div>
         </div>
         <Popover
@@ -435,7 +441,8 @@ RightPanelContainer.propTypes = {
     mapZoom: PropTypes.number.isRequired,
     setMapZoom: PropTypes.func.isRequired,
     mapStyle: PropTypes.string.isRequired,
-    setMapStyle: PropTypes.func.isRequired
+    setMapStyle: PropTypes.func.isRequired,
+    openSetup: PropTypes.func.isRequired
 }
 
 export default RightPanelContainer;

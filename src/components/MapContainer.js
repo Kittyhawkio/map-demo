@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import {addMapControls} from "actions/mapbox";
 import Map from 'components/Map'
@@ -12,12 +12,10 @@ const styles = {
 	}
 };
 
-const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, setMapZoom, mapZoom, mapStyle, mapCenter, setMapCenter}) => {
-	console.log('visible layers: ', layers)
+const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, setMapZoom, mapZoom, mapStyle, mapCenter, setMapCenter, addError}) => {
+
 	const useStyles = makeStyles(styles);
 	const classes = useStyles();
-
-
 
 	const onStyleLoad = mapObject => {
 		addMapControls(mapObject);
@@ -33,6 +31,22 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 
 	const handleZoom = (mapObject) => {
 		setMapZoom(mapObject.getZoom())
+	}
+
+	const handleError = (e, error) => {
+		console.log('error', error)
+		let errorMessage = '';
+		if (error?.error?.message) {
+			errorMessage = `Mapbox Error: ${error.error.message}`;
+		} else if (error.error.status && error.error.url) {
+			if (error.error.status === 401) {
+				errorMessage = `Aloft API Error: Not Authorized: ${error.error.status} : ${error.error.url}`
+			} else {
+				errorMessage = `Aloft API Error: ${error.error.status} : ${error.error.url}`
+			}
+
+		}
+		addError({type: 'error', message: errorMessage})
 	}
 
 	useEffect(() => {
@@ -54,6 +68,7 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 				onStyleLoad={onStyleLoad}
 				onMoveEnd={handleMove}
 				onZoomEnd={handleZoom}
+				onError={handleError}
 			>
 			{sources.map(s => {
 				return <Source key={s.id} id={s.id} tileJsonSource={{
@@ -80,7 +95,8 @@ MapContainer.propTypes = {
 	mapZoom: PropTypes.func.isRequired,
 	mapStyle: PropTypes.string.isRequired,
 	mapCenter: PropTypes.array.isRequired,
-	setMapCenter: PropTypes.func.isRequired
+	setMapCenter: PropTypes.func.isRequired,
+	addError: PropTypes.func.isRequired
 }
 
 export default MapContainer;

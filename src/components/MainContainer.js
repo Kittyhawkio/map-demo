@@ -1,4 +1,4 @@
-import {  useState, useEffect } from 'react';
+import {  useState, useEffect, useCallback } from 'react';
 import MapContainer from 'components/MapContainer';
 import RightPanelContainer from 'components/RightPanelContainer';
 import makeStyles from '@mui/styles/makeStyles';
@@ -9,6 +9,8 @@ import {
 } from 'actions/localStorage';
 import {fetchMapLayersAndSources} from "apis/airspace.api";
 import {transformLayers} from "utils/helpers";
+import {ALOFT_API_URL, ALOFT_TOKEN, MAPBOX_TOKEN} from "constants/appConstants";
+import SetupDialog from "components/SetupDialog";
 
 const styles = {
 	mainContainer: {
@@ -24,35 +26,63 @@ const MainContainer = () => {
 	const [map, setMap] = useState(null);
 	const [allLayers, setAllLayers] = useState([]);
 	const [sources, setSources] = useState([]);
-	console.log('sources', sources)
 	const [visibleLayers, setVisibleLayers] = useState([])
 	const [mapStyle, setMapStyle] = useState('streets-v12')
 	const [mapZoom, setMapZoom] = useState(9)
 	const [mapCenter, setMapCenter] = useState([-75.163526, 39.952724])
-
 	const detailPaneSize = getDetailPaneSizeFromLS();
+	const aloftApiUrl = localStorage.getItem(ALOFT_API_URL);
+	const aloftToken = localStorage.getItem(ALOFT_TOKEN);
+	const mapboxToken = localStorage.getItem(MAPBOX_TOKEN);
+	const setupVariablesDefined = Boolean(aloftApiUrl && aloftToken && mapboxToken)
+	const [errors, setErrors] = useState([])
+	const [setupDialogOpen, setSetupDialogOpen]= useState(!setupVariablesDefined || errors.length > 0);
+
+	const addError = useCallback((error) => {
+		const updatedErrors = [...errors];
+		updatedErrors.push(error);
+		setErrors(updatedErrors)
+	}, [errors])
 
 	const onDragFinished = width => {
 		saveDetailPaneSizeToLS(width);
 		setPane2Width(width);
 	};
 
+	const onCloseSetup = () => {
+		setSetupDialogOpen(false)
+		window.location.reload();
+	}
+	const handleOpenSetup = () => {
+		setSetupDialogOpen(true)
+	}
+
 	useEffect(() => {
 
 		const getMapLayersAndSources = async () => {
-			const {sources, layers} = await fetchMapLayersAndSources();
+			const {sources, layers} = await fetchMapLayersAndSources(addError);
 			const layersWithAddedData = transformLayers(layers);
 			setAllLayers(layersWithAddedData);
 			setVisibleLayers(layersWithAddedData)
 			setSources(sources)
 		}
 
-		getMapLayersAndSources();
+		if (setupVariablesDefined && errors.length === 0) {
+			getMapLayersAndSources();
+		}
 
-	}, [])
+
+	}, [setupVariablesDefined, addError, errors])
+
+	useEffect(() => {
+		setSetupDialogOpen(!setupVariablesDefined || errors.length > 0)
+	}, [errors, setSetupDialogOpen, setupVariablesDefined])
 
 	return (
 		<div className={classes.mainContainer}>
+
+			<SetupDialog open={setupDialogOpen} onClose={onCloseSetup} errors={errors} setErrors={setErrors} />
+			{!setupDialogOpen &&
 				<>
 					<SplitPane
 						className={classes.mainContainer}
@@ -73,6 +103,7 @@ const MainContainer = () => {
 								setMapStyle={setMapStyle}
 								mapCenter={mapCenter}
 								setMapCenter={setMapCenter}
+								addError={addError}
 							/>
 							<RightPanelContainer
 								map={map}
@@ -84,9 +115,10 @@ const MainContainer = () => {
 								mapZoom={mapZoom}
 								setMapStyle={setMapStyle}
 								setMapZoom={setMapZoom}
+								openSetup={handleOpenSetup}
 							/>
 					</SplitPane>
-				</>
+				</>}
 
 		</div>
 	);
