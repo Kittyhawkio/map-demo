@@ -1,7 +1,7 @@
 # Aloft Map Demo
 An example of how to use Aloft's map layers in a React application
 
-[Demo App](https://codesandbox.io/embed/github/Kittyhawkio/map-demo/tree/main/?autoresize=1&fontsize=14&hidenavigation=1&theme=dark&view=preview)
+[Demo App](https://4dvxgv.csb.app/)
 
 
 ### Setup
