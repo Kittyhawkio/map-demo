@@ -1,13 +1,11 @@
 # Aloft Map Demo
 An example of how to use Aloft's map layers in a React application
 
-###[Demo App](https://codesandbox.io/embed/github/Kittyhawkio/map-demo/tree/main/?autoresize=1&fontsize=14&hidenavigation=1&theme=dark&view=preview)
+[Demo App](https://codesandbox.io/embed/github/Kittyhawkio/map-demo/tree/main/?autoresize=1&fontsize=14&hidenavigation=1&theme=dark&view=preview)
 
 
 ### Setup
-1. Open this project in CodeSandbox. 
-
-[![Edit map-demo](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/Kittyhawkio/map-demo/tree/main/?fontsize=14&theme=dark)
+1. Open this project in CodeSandbox [here](https://codesandbox.io/s/github/Kittyhawkio/map-demo/tree/main/?fontsize=14&theme=dark).
 2. Fork the repository if you'd like to save your changes in your CodeSandbox account.
 3. Enter your [Aloft API Token](https://www.aloft.ai/developer/) and your [Mapbox Token](https://docs.mapbox.com/help/glossary/access-token/) when prompted.
 
