@@ -1,9 +1,10 @@
-import {useEffect} from 'react';
-import makeStyles from '@mui/styles/makeStyles';
+import {useEffect, useState} from 'react';
 import {addMapControls} from "actions/mapbox";
 import Map from 'components/Map'
 import PropTypes from 'prop-types'
-import {Layer, Source} from 'react-mapbox-gl';
+import {Layer, Popup, Source} from 'react-mapbox-gl';
+import PopupContent from 'components/PopupContent'
+import {Box} from '@mui/material'
 
 const styles = {
 	mapContainer: {
@@ -14,8 +15,8 @@ const styles = {
 
 const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, setMapZoom, mapZoom, mapStyle, mapCenter, setMapCenter, addError}) => {
 
-	const useStyles = makeStyles(styles);
-	const classes = useStyles();
+	const [selectedFeature, setSelectedFeature] = useState(null)
+	const [popupLocation, setPopupLocation] = useState(null)
 
 	const onStyleLoad = mapObject => {
 		addMapControls(mapObject);
@@ -34,7 +35,6 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 	}
 
 	const handleError = (e, error) => {
-		console.log('error', error)
 		let errorMessage = '';
 		if (error?.error?.message) {
 			errorMessage = `Mapbox Error: ${error.error.message}`;
@@ -49,6 +49,30 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 		addError({type: 'error', message: errorMessage})
 	}
 
+	const handleMapClick = (mapObject, e) => {
+		const intersectingFeatures = mapObject.queryRenderedFeatures(e.point);
+		const faaAirspaceFeatures = intersectingFeatures.filter(feature => feature.source === 'faa_airspace'); //Filter out features coming from the map style
+		if (faaAirspaceFeatures[0]) {
+			setPopupLocation([e.lngLat.lng, e.lngLat.lat])
+			setSelectedFeature(faaAirspaceFeatures[0])
+		}
+
+	};
+
+	const handleMouseEnter = (e) => {
+		const mapObject = e.target;
+		mapObject.getCanvas().style.cursor = "pointer";
+	};
+
+	const handleMouseLeave = e => {
+		const mapObject = e.target;
+		mapObject.getCanvas().style.cursor = "default";
+	};
+
+	const handleClosePopup = () => {
+		setSelectedFeature(null)
+	}
+
 	useEffect(() => {
 		if (map) {
 			map.resize();
@@ -56,7 +80,7 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 	}, [widthOffset, map]);
 
 	return (
-		<div className={classes.mapContainer}>
+		<Box sx={styles.mapContainer}>
 			{sources.length > 0 && <Map
 				style={`mapbox://styles/mapbox/${mapStyle}`}
 				containerStyle={{
@@ -69,19 +93,30 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 				onMoveEnd={handleMove}
 				onZoomEnd={handleZoom}
 				onError={handleError}
+				onClick={handleMapClick}
+
 			>
-			{sources.map(s => {
-				return <Source key={s.id} id={s.id} tileJsonSource={{
-				type: s.type,
-					url: s.url
-				}} />
-			})}
-			{
-				layers.map(l => {
-					return <Layer key={l.id} sourceId={l.source} sourceLayer={l['source-layer']} type={l.type} paint={l.paint} maxZoom={l.maxzoom} minZoom={l.minzoom}  />
-			})}
+				{sources.map(s => {
+					return <Source key={s.id} id={s.id} tileJsonSource={{
+						type: s.type,
+						url: s.url
+					}}/>
+				})}
+				{
+					layers.map(l => {
+						return <Layer onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} key={l.id}
+									  sourceId={l.source} sourceLayer={l['source-layer']} type={l.type} paint={l.paint}
+									  maxZoom={l.maxzoom} minZoom={l.minzoom} layout={l.layout}/>
+					})}
+				{selectedFeature &&
+				<Popup coordinates={popupLocation}
+					   offset={-15}
+					   onMouseLeave={handleClosePopup}
+				>
+					<PopupContent feature={selectedFeature}/>
+				</Popup>}
 			</Map>}
-		</div>
+		</Box>
 	);
 };
 

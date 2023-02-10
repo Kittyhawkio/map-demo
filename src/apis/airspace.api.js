@@ -7,7 +7,6 @@ export const fetchMapLayersAndSources = async (addError) => {
         const res = await axiosInstance.get(url);
         return res.data.data;
     } catch(e) {
-        console.log('error', e)
         if (e.response.status === 404) {
             addError({type: 'error', message: `Aloft API Error: Incorrect URL: ${e.message}`})
         } else {

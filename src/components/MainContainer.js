@@ -1,7 +1,7 @@
 import {  useState, useEffect, useCallback } from 'react';
 import MapContainer from 'components/MapContainer';
 import RightPanelContainer from 'components/RightPanelContainer';
-import makeStyles from '@mui/styles/makeStyles';
+import {Box} from '@mui/material';
 import SplitPane from 'react-split-pane';
 import {
 	getDetailPaneSizeFromLS,
@@ -20,14 +20,13 @@ const styles = {
 };
 
 const MainContainer = () => {
-	const useStyles = makeStyles(styles);
-	const classes = useStyles();
+
 	const [pane2Width, setPane2Width] = useState(1); //The actual value of this does not matter. A change in this value is used to trigger a resize in the map component.
 	const [map, setMap] = useState(null);
 	const [allLayers, setAllLayers] = useState([]);
 	const [sources, setSources] = useState([]);
 	const [visibleLayers, setVisibleLayers] = useState([])
-	const [mapStyle, setMapStyle] = useState('streets-v12')
+	const [mapStyle, setMapStyle] = useState('streets-v11')
 	const [mapZoom, setMapZoom] = useState(9)
 	const [mapCenter, setMapCenter] = useState([-75.163526, 39.952724])
 	const detailPaneSize = getDetailPaneSizeFromLS();
@@ -47,6 +46,7 @@ const MainContainer = () => {
 	const onDragFinished = width => {
 		saveDetailPaneSizeToLS(width);
 		setPane2Width(width);
+		console.log('width: ', width)
 	};
 
 	const onCloseSetup = () => {
@@ -79,17 +79,17 @@ const MainContainer = () => {
 	}, [errors, setSetupDialogOpen, setupVariablesDefined])
 
 	return (
-		<div className={classes.mainContainer}>
+		<Box sx={styles.mainContainer}>
 
 			<SetupDialog open={setupDialogOpen} onClose={onCloseSetup} errors={errors} setErrors={setErrors} />
 			{!setupDialogOpen &&
 				<>
 					<SplitPane
-						className={classes.mainContainer}
 						split='vertical'
 						onDragFinished={onDragFinished}
 						size={detailPaneSize}
 						primary={'second'}
+						minSize={550}
 					>
 							<MapContainer
 								widthOffset={pane2Width}
@@ -120,7 +120,7 @@ const MainContainer = () => {
 					</SplitPane>
 				</>}
 
-		</div>
+		</Box>
 	);
 };
 

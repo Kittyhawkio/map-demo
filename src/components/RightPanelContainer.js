@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    ButtonGroup,
     Collapse,
     Divider,
     IconButton,
@@ -16,7 +17,6 @@ import {
     TextField,
     Typography
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import {$primary, $white} from 'styles/colors';
 import {aboutLink, termsLink} from 'constants/appConstants';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -26,6 +26,8 @@ import {useState} from 'react'
 import {updateLayerStyles} from "utils/helpers";
 import PropTypes from 'prop-types'
 import {startCase} from 'lodash-es'
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Visibility from '@mui/icons-material/Visibility';
 
 const styles = {
     detailPanelContainer: {
@@ -80,7 +82,7 @@ const styles = {
         width: '90%'
     },
     textField: {
-        width: '100px'
+        width: '150px'
     },
     mapSettingsContainer: {
         paddingTop: '0px',
@@ -91,9 +93,9 @@ const styles = {
         gridGap: '20px'
     },
     buttonsContainer: {
-        padding: '20px',
+        paddingTop: '20px',
         display: 'flex',
-        gridGap: '20px'
+        justifyContent: 'space-between',
     },
     card: {
         marginBottom: '20px',
@@ -103,6 +105,7 @@ const styles = {
         textTransform: 'none',
         fontSize: 16
     }
+
 };
 
 const RightPanelContainer = ({
@@ -116,8 +119,6 @@ const RightPanelContainer = ({
                                  setMapZoom,
                                  openSetup
                              }) => {
-    const useStyles = makeStyles(styles);
-    const classes = useStyles();
     const visibleLayerIds = visibleLayers.map(l => l.id);
     const [colorPickerAnchorEl, setColorPickerAnchorEl] = useState(null);
     const [editingLayer, setEditingLayer] = useState(null)
@@ -149,14 +150,25 @@ const RightPanelContainer = ({
 
     const handleToggleCollapse = (l) => {
         let updatedOpenLayers = [...openLayers]
+        console.log('open layers: ', openLayers, 'clicked: ', l.id)
         if (openLayers.includes(l.id)) {
-            const toRemove = updatedOpenLayers.findIndex(layer => layer.id === l.id);
+            const toRemove = updatedOpenLayers.findIndex(layer => layer === l.id);
+            console.log('to remove: ', toRemove)
             updatedOpenLayers.splice(toRemove, 1);
         } else {
             updatedOpenLayers.push(l.id);
         }
         setOpenLayers(updatedOpenLayers)
     };
+
+    const handleExpandAll = () => {
+        const allLayerIds = allLayers.map(l => l.id);
+      setOpenLayers(allLayerIds)
+    };
+
+    const handleCollapseAll = () => {
+        setOpenLayers([])
+    }
 
     const handleOpenColors = (e, l) => {
         setColorPickerAnchorEl(e.currentTarget);
@@ -284,40 +296,53 @@ const RightPanelContainer = ({
         setVisibleLayers(allLayers)
     }
 
-    return <div className={classes.detailPanelContainer}>
-        <div className={classes.sectionTitleContainer}>
+    return <Box sx={styles.detailPanelContainer}>
+        <Box sx={styles.sectionTitleContainer}>
             <Typography variant="h4" gutterBottom>Map Settings</Typography>
-        </div>
-        <div className={classes.mapSettingsContainer}>
+        </Box>
+        <Box sx={styles.mapSettingsContainer}>
             <Typography variant="overline" component={Link} href="https://docs.mapbox.com/help/glossary/zoom-level/" target="_blank">Zoom</Typography>
             <TextField variant="standard" type="number" value={mapZoom}
-                       className={classes.textField}
+                       sx={styles.textField}
                        inputProps={{
                            max: 22,
                            min: 0
                        }}
                        onChange={handleZoomChange}/>
             <Typography variant="overline" component={Link} href="https://docs.mapbox.com/api/maps/styles/#mapbox-styles" target="_blank">Style</Typography>
-            <Select variant="standard" onChange={handleStyleChange} value={mapStyle}>
-                <MenuItem value="light-v11">Light</MenuItem>
-                <MenuItem value="dark-v11">Dark</MenuItem>
-                <MenuItem value="streets-v12">Streets</MenuItem>
-                <MenuItem value="satellite-streets-v12">Satellite Streets</MenuItem>
-                <MenuItem value="outdoors-v12">Outdoors</MenuItem>
+            {/*Using old version of styles here to ensure they have the airport icons available*/}
+            <Select variant="standard" onChange={handleStyleChange} value={mapStyle} sx={styles.textField}>
+                <MenuItem value="streets-v11">Streets</MenuItem>
+                <MenuItem value="outdoors-v11">Outdoors</MenuItem>
+                <MenuItem value="light-v10">Light</MenuItem>
+                <MenuItem value="dark-v10">Dark</MenuItem>
+                <MenuItem value="satellite-v9">Satellite</MenuItem>
+                <MenuItem value="satellite-streets-v11">Satellite Streets</MenuItem>
+                <MenuItem value="navigation-day-v1">Navigation Day</MenuItem>
+                <MenuItem value="navigation-night-v1">Navigation Night</MenuItem>
             </Select>
-        </div>
+        </Box>
         <Divider/>
-        <div className={classes.sectionTitleContainer}>
+        <Box sx={styles.sectionTitleContainer}>
             <Typography variant="h4" gutterBottom>Layers</Typography>
             <Typography variant="subtitle1">Use the toggles to control a layer's visibility. Expand each layer to
                 customize its styling.</Typography>
-        </div>
-        <div className={classes.buttonsContainer}>
-            <Button variant="contained" onClick={handleTurnAllLayersOff}>All Layers Off</Button>
-            <Button variant="contained" onClick={handleTurnAllLayersOn}>All Layers On</Button>
-        </div>
+            <Box sx={styles.buttonsContainer}>
+                <ButtonGroup variant="outlined">
+                    <Button  onClick={handleTurnAllLayersOn} startIcon={<Visibility/>}>All On</Button>
+                    <Button onClick={handleTurnAllLayersOff} startIcon={<VisibilityOff/>}>All Off</Button>
+                </ButtonGroup>
+
+                <ButtonGroup variant="outlined">
+                    <Button  onClick={handleExpandAll} startIcon={<ExpandMore/>}>Expand All</Button>
+                    <Button onClick={handleCollapseAll} startIcon={<ExpandLess/>}>Collapse All</Button>
+                </ButtonGroup>
+
+            </Box>
+        </Box>
+
         <Divider/>
-        <div className={classes.listContainer}>
+        <Box sx={styles.listContainer}>
             <List>
                 {allLayers.map((l, idx) => {
                     const open = openLayers.includes(l.id);
@@ -341,11 +366,11 @@ const RightPanelContainer = ({
                                                 href={`https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#${l.type === 'fill' ? 'paint-fill-fill-color' : 'paint-circle-circle-color'}`}
                                                 target="_blank">{l.type === 'fill' ? 'Fill' : 'Circle'} Color</Typography>
                                     <Button
-                                        className={classes.colorButton}
+                                        sx={styles.colorButton}
                                         variant='outlined'
                                         onClick={(e) => handleOpenColors(e, l)}
                                         startIcon={l.editableColor &&
-                                        <div style={{backgroundColor: l.editableColor, height: 20, width: 20}}/>}
+                                        <Box style={{backgroundColor: l.editableColor, height: 20, width: 20}}/>}
                                     >
                                         {!l.editableColor ? 'Select Color' : l.editableColor}
                                     </Button>
@@ -353,7 +378,7 @@ const RightPanelContainer = ({
                                                 href={`https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#${l.type === 'fill' ? 'paint-fill-fill-opacity' : 'paint-circle-circle-opacity'}`}
                                                 target="_blank">{l.type === 'fill' ? 'Fill' : 'Circle'} Opacity</Typography>
                                     <Slider
-                                        className={classes.slider}
+                                        sx={styles.slider}
                                         defaultValue={l.editableOpacity}
                                         step={.05}
                                         marks
@@ -366,7 +391,7 @@ const RightPanelContainer = ({
                                                 href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#maxzoom"
                                                 target="_blank">Max Zoom</Typography>
                                     <TextField variant="standard" type="number" value={l.editableMaxZoom}
-                                               className={classes.textField}
+                                               sx={styles.textField}
                                                inputProps={{
                                                    max: 24,
                                                    min: 0
@@ -376,7 +401,7 @@ const RightPanelContainer = ({
                                                 href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#minzoom"
                                                 target="_blank">Min Zoom</Typography>
                                     <TextField variant="standard" type="number" value={l.editableMinZoom}
-                                               className={classes.textField}
+                                               sx={styles.textField}
                                                inputProps={{
                                                    max: 24,
                                                    min: 0
@@ -389,7 +414,7 @@ const RightPanelContainer = ({
                                                 href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#paint-circle-circle-radius"
                                                 target="_blank">Circle Radius</Typography>
                                     <TextField variant="standard" type="number" value={l.editableCircleRadius}
-                                               className={classes.textField}
+                                               sx={styles.textField}
                                                inputProps={{
                                                    min: 0
                                                }}
@@ -401,19 +426,19 @@ const RightPanelContainer = ({
                     </Box>
                 })}
             </List>
-        </div>
-        <div className={classes.footer}>
-            <Divider className={classes.divider}/>
-            <div className={classes.footerLinks}>
-                <div className={classes.link} onClick={handleClickAboutAloft}>
+        </Box>
+        <Box sx={styles.footer}>
+            <Divider sx={styles.divider}/>
+            <Box sx={styles.footerLinks}>
+                <Box sx={styles.link} onClick={handleClickAboutAloft}>
                     About Aloft
-                </div>
-                <div className={classes.link} onClick={handleClickTerms}>
+                </Box>
+                <Box sx={styles.link} onClick={handleClickTerms}>
                     Terms of Use
-                </div>
-                <Button className={classes.button} onClick={openSetup}>Open Setup</Button>
-            </div>
-        </div>
+                </Box>
+                <Button sx={styles.button} onClick={openSetup}>Open Setup</Button>
+            </Box>
+        </Box>
         <Popover
             open={colorPickerOpen}
             anchorEl={colorPickerAnchorEl}
@@ -429,7 +454,7 @@ const RightPanelContainer = ({
         >
             <SketchPicker disableAlpha color={editingLayer?.editableColor} onChange={handleChangeColor}/>
         </Popover>
-    </div>
+    </Box>
 };
 
 RightPanelContainer.propTypes = {

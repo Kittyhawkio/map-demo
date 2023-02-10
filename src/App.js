@@ -11,3 +11,5 @@ const App = () => {
 };
 
 export default App;
+
+//TODO update the link to Aloft API token instructions
