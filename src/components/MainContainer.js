@@ -46,7 +46,6 @@ const MainContainer = () => {
 	const onDragFinished = width => {
 		saveDetailPaneSizeToLS(width);
 		setPane2Width(width);
-		console.log('width: ', width)
 	};
 
 	const onCloseSetup = () => {

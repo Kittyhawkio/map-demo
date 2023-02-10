@@ -150,10 +150,8 @@ const RightPanelContainer = ({
 
     const handleToggleCollapse = (l) => {
         let updatedOpenLayers = [...openLayers]
-        console.log('open layers: ', openLayers, 'clicked: ', l.id)
         if (openLayers.includes(l.id)) {
             const toRemove = updatedOpenLayers.findIndex(layer => layer === l.id);
-            console.log('to remove: ', toRemove)
             updatedOpenLayers.splice(toRemove, 1);
         } else {
             updatedOpenLayers.push(l.id);
