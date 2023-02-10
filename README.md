@@ -1,13 +1,32 @@
 # Aloft Map Demo
 An example of how to use Aloft's map layers in a React application
 
-## Getting Started
+###[Demo App](https://codesandbox.io/embed/github/Kittyhawkio/map-demo/tree/main/?autoresize=1&fontsize=14&hidenavigation=1&theme=dark&view=preview)
 
-1. Open this project in CodeSandbox here: [https://codesandbox.io/s/github/Kittyhawkio/map-demo/tree/production](https://codesandbox.io/s/github/Kittyhawkio/map-demo)
+
+### Setup
+1. Open this project in CodeSandbox. 
+
+[![Edit map-demo](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/Kittyhawkio/map-demo/tree/main/?fontsize=14&theme=dark)
 2. Fork the repository if you'd like to save your changes in your CodeSandbox account.
 3. Enter your [Aloft API Token](https://www.aloft.ai/developer/) and your [Mapbox Token](https://docs.mapbox.com/help/glossary/access-token/) when prompted.
-4. Toggle layers and change layer styles to see how the map is affected.
-5. View the code to understand how to implement Aloft's map layers in your application:
+
+### App Features
+1. Adjust map settings: 
+  - [zoom](https://docs.mapbox.com/help/glossary/zoom-level/)
+  - [style](https://docs.mapbox.com/api/maps/styles/#mapbox-styles) 
+2. Adjust layer settings:
+    - toggle visibility
+    - adjust styles
+      - [fill-color](https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#paint-fill-fill-color)
+      - [fill-opacity](https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#paint-fill-fill-opacity)
+      - [circle-color](https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#paint-circle-circle-color)
+      - [circle-opacity](https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#paint-circle-circle-opacity)
+      - [circle-radius](https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#paint-circle-circle-radius)
+      - [maxzoom](https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#maxzoom)
+      - [minzoom](https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#minzoom)
+
+### Code Explanation
    1. [MainContainer.js](https://github.com/Kittyhawkio/map-demo/blob/production/src/components/MainContainer.js) controls the display of the main components, as well as loading the map layers and sources from the Aloft API.
    2. [SetupDialog.js](https://github.com/Kittyhawkio/map-demo/blob/production/src/components/SetupDialog.js) configures the app with the required access tokens by setting them in `localStorage`
    3. [Map.js](https://github.com/Kittyhawkio/map-demo/blob/production/src/components/Map.js) initiates an instance of [react-mapbox-gl](https://github.com/alex3165/react-mapbox-gl)
