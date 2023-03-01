@@ -17,6 +17,7 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 
 	const [selectedFeature, setSelectedFeature] = useState(null)
 	const [popupLocation, setPopupLocation] = useState(null)
+	const sourceIds = sources.map(s => s.id);
 
 	const onStyleLoad = mapObject => {
 		addMapControls(mapObject);
@@ -51,10 +52,10 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 
 	const handleMapClick = (mapObject, e) => {
 		const intersectingFeatures = mapObject.queryRenderedFeatures(e.point);
-		const faaAirspaceFeatures = intersectingFeatures.filter(feature => feature.source === 'faa_airspace'); //Filter out features coming from the map style
-		if (faaAirspaceFeatures[0]) {
+		const aloftLayerFeatures = intersectingFeatures.filter(feature => sourceIds.includes(feature.source)); //Filter out features coming from the map style
+		if (aloftLayerFeatures[0]) {
 			setPopupLocation([e.lngLat.lng, e.lngLat.lat])
-			setSelectedFeature(faaAirspaceFeatures[0])
+			setSelectedFeature(aloftLayerFeatures[0])
 		}
 
 	};
