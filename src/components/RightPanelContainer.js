@@ -18,7 +18,7 @@ import {
     Typography
 } from '@mui/material';
 import {$primary, $white} from 'styles/colors';
-import {aboutLink, termsLink} from 'constants/appConstants';
+import {aboutLink, aloftMapStyles, mapboxMapStyles, termsLink} from 'constants/appConstants';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import {SketchPicker} from 'react-color';
@@ -308,16 +308,14 @@ const RightPanelContainer = ({
                        }}
                        onChange={handleZoomChange}/>
             <Typography variant="overline" component={Link} href="https://docs.mapbox.com/api/maps/styles/#mapbox-styles" target="_blank">Style</Typography>
-            {/*Using old version of styles here to ensure they have the airport icons available*/}
             <Select variant="standard" onChange={handleStyleChange} value={mapStyle} sx={styles.textField}>
-                <MenuItem value="streets-v11">Streets</MenuItem>
-                <MenuItem value="outdoors-v11">Outdoors</MenuItem>
-                <MenuItem value="light-v10">Light</MenuItem>
-                <MenuItem value="dark-v10">Dark</MenuItem>
-                <MenuItem value="satellite-v9">Satellite</MenuItem>
-                <MenuItem value="satellite-streets-v11">Satellite Streets</MenuItem>
-                <MenuItem value="navigation-day-v1">Navigation Day</MenuItem>
-                <MenuItem value="navigation-night-v1">Navigation Night</MenuItem>
+                {
+                    aloftMapStyles.map(s => <MenuItem key={s.value} value={s.value}>{s.name}</MenuItem>)
+                }
+                {
+                    mapboxMapStyles.map(s => <MenuItem key={s.value} value={s.value}>{s.name}</MenuItem>)
+                }
+
             </Select>
         </Box>
         <Divider/>
