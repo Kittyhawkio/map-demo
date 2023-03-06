@@ -26,7 +26,7 @@ const MainContainer = () => {
 	const [allLayers, setAllLayers] = useState([]);
 	const [sources, setSources] = useState([]);
 	const [visibleLayers, setVisibleLayers] = useState([])
-	const [mapStyle, setMapStyle] = useState('streets-v11')
+	const [mapStyle, setMapStyle] = useState('mapbox://styles/kittyhawkio/clecwrlel000p01o1xer2cm34')
 	const [mapZoom, setMapZoom] = useState(9)
 	const [mapCenter, setMapCenter] = useState([-75.163526, 39.952724])
 	const detailPaneSize = getDetailPaneSizeFromLS();
