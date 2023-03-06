@@ -21,7 +21,6 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 	const onStyleLoad = mapObject => {
 		addMapControls(mapObject);
 		setMap(mapObject);
-		setMapStyle(mapObject.getStyle().sprite.split('mapbox/')[1])
 		setMapZoom(mapObject.getZoom())
 	};
 
@@ -82,7 +81,7 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 	return (
 		<Box sx={styles.mapContainer}>
 			{sources.length > 0 && <Map
-				style={`mapbox://styles/mapbox/${mapStyle}`}
+				style={mapStyle}
 				containerStyle={{
 					height: '100%',
 					width: '100%'
