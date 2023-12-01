@@ -52,7 +52,6 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 	const handleMapClick = (mapObject, e) => {
 		const intersectingFeatures = mapObject.queryRenderedFeatures(e.point);
 		const aloftLayerFeatures = intersectingFeatures.filter(feature => sourceIds.includes(feature.source)); //Filter out features coming from the map style
-		console.log('aloftLayerFeatures', aloftLayerFeatures)
 		if (aloftLayerFeatures[0]) {
 			setPopupLocation([e.lngLat.lng, e.lngLat.lat])
 			setSelectedFeature(aloftLayerFeatures[0])
