@@ -5,7 +5,7 @@ export const DETAIL_PANE_SIZE = 'DETAIL_PANE_SIZE';
 export const MAPBOX_TOKEN = 'mapboxToken';
 export const ALOFT_TOKEN = 'aloftToken';
 export const ALOFT_API_URL = 'aloftApiUrl'
-export const defaultAloftApiUrl = 'https://api.aloft.ai/v1/airspace/layers'
+export const defaultAloftApiUrl = 'https://api.aloft.ai/v1/airspace/layers?data_formats[]=geojson&data_formats[]=vector'
 
  //Using old version of some styles here to ensure they have the airport icons available
 export const mapboxMapStyles = [
