@@ -97,17 +97,61 @@ const MapContainer = ({widthOffset, sources, layers, map, setMap, setMapStyle, s
 
 			>
 				{sources.map(s => {
-					return <Source key={s.id} id={s.id} tileJsonSource={{
-						type: s.type,
-						url: s.url
-					}}/>
+					if (s.type === 'geojson') {
+						return (
+							<Source
+								key={s.id}
+								id={s.id}
+								geoJsonSource={{
+									type: s.type,
+									data: s.data
+								}}
+							/>
+						);
+					} else {
+						return (
+							<Source
+								key={s.id}
+								id={s.id}
+								tileJsonSource={{
+									type: s.type,
+									url: s.url
+								}}
+							/>
+						);
+					}
 				})}
-				{
-					layers.map(l => {
-						return <Layer onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} key={l.id}
-									  sourceId={l.source} sourceLayer={l['source-layer']} type={l.type} paint={l.paint}
-									  maxZoom={l.maxzoom} minZoom={l.minzoom} layout={l.layout}/>
-					})}
+				{layers.map(l => {
+					const layerSourceType = sources.find(s => s.id === l.source)?.type;
+					if (layerSourceType === 'geojson') {
+						return (
+							<Layer
+								onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+								key={l.id}
+								sourceId={l.source}
+								type={l.type}
+								paint={l.paint}
+								maxZoom={l.maxzoom}
+								minZoom={l.minzoom}
+								layout={l.layout}
+							/>
+						);
+					} else {
+						return (
+							<Layer
+								onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+								key={l.id}
+								sourceId={l.source}
+								sourceLayer={l['source-layer']}
+								type={l.type}
+								paint={l.paint}
+								maxZoom={l.maxzoom}
+								minZoom={l.minzoom}
+								layout={l.layout}
+							/>
+						);
+					}
+				})}
 				{selectedFeature &&
 				<Popup coordinates={popupLocation}
 					   offset={-15}

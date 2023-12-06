@@ -19,7 +19,7 @@ const PopupContent = ({feature}) => {
         }
     };
 
-    const layerName = feature.layer['source-layer'].split('.')[1]
+    const layerName = feature.sourceLayer ? feature.sourceLayer.split('.')[1] : feature.source;
 
     return <Box sx={styles.main}>
         <Box sx={styles.title}>
