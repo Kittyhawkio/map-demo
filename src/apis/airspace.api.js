@@ -9,6 +9,8 @@ export const fetchMapLayersAndSources = async (addError) => {
     } catch(e) {
         if (e.response.status === 404) {
             addError({type: 'error', message: `Aloft API Error: Incorrect URL: ${e.message}`})
+        } else if (e.response.status === 401) {
+            addError({type: 'error', message: `Aloft API Error: Invalid Token: ${e.message}`})
         } else {
             addError({type: 'error', message: `Aloft API Error: ${e.message}`})
         }

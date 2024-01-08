@@ -59,11 +59,14 @@ const MainContainer = () => {
 	useEffect(() => {
 
 		const getMapLayersAndSources = async () => {
-			const {sources, layers} = await fetchMapLayersAndSources(addError);
-			const layersWithAddedData = transformLayers(layers);
-			setAllLayers(layersWithAddedData);
-			setVisibleLayers(layersWithAddedData)
-			setSources(sources)
+			const res = await fetchMapLayersAndSources(addError);
+			if (res) {
+				const {sources, layers} = res;
+				const layersWithAddedData = transformLayers(layers);
+				setAllLayers(layersWithAddedData);
+				setVisibleLayers(layersWithAddedData)
+				setSources(sources)
+			}
 		}
 
 		if (setupVariablesDefined && errors.length === 0) {
